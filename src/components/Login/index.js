@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { Text, View, SafeAreaView, TextInput, StyleSheet ,TouchableOpacity} from "react-native";
+import { Text, View, SafeAreaView, TextInput, StyleSheet ,TouchableOpacity, Alert} from "react-native";
 
 export default function Login() {
     const [email, setEmail] = useState('');
-    const [password,setPssword] = useState('')
+    const [password,setPssword] = useState('');
+    const [type,setType] = useState('Login');
+
+    function handleLogin(){
+        alert('acessar')
+       
+    }
 
     return (
 
@@ -24,15 +30,17 @@ export default function Login() {
                 onChangeText={(text) => setPssword(text)}
             />
 
-           <TouchableOpacity>
-                <Text>
-                   Acessar
+           <TouchableOpacity
+            style={[styles.handleLogin, { backgroundColor: type === 'Login' ? '#3ea6f2' : '#141414' } ] }
+             onPress={handleLogin}>
+                <Text style={{color:'#fff', fontSize: 20}}>
+                  {type === 'Login' ? 'Acessar' : 'Cadastrar'}
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=> setType(type => type === 'Login' ? 'Cadastrar' : 'Login')}>
                 <Text style={{textAlign: 'center', fontSize: 20}}>
-                    Criar uma Conta
+                   {type === 'Login' ? 'Criar uma Conta' : 'Ja possuo um conta'}
                 </Text>
             </TouchableOpacity>
 
@@ -45,22 +53,30 @@ export default function Login() {
 const styles = StyleSheet.create({
     content: {
         flex: 1,
-        marginTop: 19,
+        paddingTop: 40,
         backgroundColor: '#f2f6fc',
-         alignItems: 'center',
-         borderRadius: 4
+       paddingHorizontal: 10,
 
     },
     input:{
         backgroundColor: '#fff',
-       borderColor: '#000',
+        borderColor: '#141414',
         borderWidth: 1,
-        width: '90%',
-        marginTop: 10,
-        padding: 8,
         borderRadius: 4,
         height: 45,
-        marginBottom: 10
+        marginBottom: 10,
+        padding: 10
       
+    }, 
+    handleLogin:{
+       alignItems: 'center',
+       color: '#fff',
+      
+        borderColor: '#141414',
+        borderWidth: 1,
+        borderRadius: 4,
+        height: 45,
+        marginBottom: 10,
+        padding: 10
     }
 })

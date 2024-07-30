@@ -26,9 +26,7 @@ export default function App(){
       flex: 1,
       paddingTop: 26,
       paddingHorizontal: 10,
-      backgroundColor: '#f2f6fc',
-      paddingLeft: 8,
-      
+      backgroundColor: '#f2f6fc',    
     }
   }
  )
