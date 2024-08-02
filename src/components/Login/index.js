@@ -1,13 +1,36 @@
 import React, { useState } from "react";
-import { Text, View, SafeAreaView, TextInput, StyleSheet ,TouchableOpacity, Alert} from "react-native";
+import { Text, View, SafeAreaView, TextInput, StyleSheet ,TouchableOpacity,} from "react-native";
+import { database ,auth } from '../../services/firebaseConnection'
+import { ref, set, push,onValue, } from 'firebase/database';
+import { firebase } from '@react-native-firebase/database';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword ,signOut} from 'firebase/auth';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Login() {
+export default function Login({changeStatus}) {
     const [email, setEmail] = useState('');
     const [password,setPssword] = useState('');
     const [type,setType] = useState('Login');
 
-    function handleLogin(){
-        alert('acessar')
+   async function handleLogin(){
+        if(type === 'Login'){
+
+         const userCredential = await signInWithEmailAndPassword(auth,email,password)
+         
+       await AsyncStorage.setItem('user', JSON.stringify(userCredential.user.email)
+       )
+         changeStatus(userCredential.user.uid)
+        console.log(userCredential.user.email);
+       // alert(userCredential.user.email)
+
+         
+        }else{
+            const createCredential = await createUserWithEmailAndPassword(auth, email, password);
+            //console.log(userCredential)
+            
+            await AsyncStorage('user', JSON.stringify(createCredential.user.email))
+           
+            changeStatus(createCredential.user.uid)
+        }
        
     }
 
