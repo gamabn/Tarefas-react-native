@@ -16,7 +16,7 @@ export default function Login({changeStatus}) {
 
          const userCredential = await signInWithEmailAndPassword(auth,email,password)
          
-       await AsyncStorage.setItem('user', JSON.stringify(userCredential.user.email)
+       await AsyncStorage.setItem('user', JSON.stringify(userCredential.user.uid)
        )
          changeStatus(userCredential.user.uid)
         console.log(userCredential.user.email);
@@ -27,7 +27,7 @@ export default function Login({changeStatus}) {
             const createCredential = await createUserWithEmailAndPassword(auth, email, password);
             //console.log(userCredential)
             
-            await AsyncStorage('user', JSON.stringify(createCredential.user.email))
+            await AsyncStorage('user', JSON.stringify(createCredential.user.uid))
            
             changeStatus(createCredential.user.uid)
         }
