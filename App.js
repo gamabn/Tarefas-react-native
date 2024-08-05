@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, Keyboard } from 'react-native';
 import Login from './src/components/Login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import List from './src/components/List';
 import { database } from './src/services/firebaseConnection';
-import { ref, push,set, onValue } from 'firebase/database';
+import { ref, push,set, onValue, remove,update } from 'firebase/database';
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [newTask, setNewTask] = useState('');
   const [task, setTask] = useState([]);
+  const [key,setKey] = useState('')
+  const inputRef = useRef(null)
 
   useEffect(() => {
     async function loadStorage() {
@@ -47,30 +49,71 @@ export default function App() {
   async function handleAdd() {
     if (newTask === '') return;
 
-    try {
-      const userRef = ref(database, `tarefas/${user}`);
-      const newTaskRef = push(userRef);
-      await set(newTaskRef, {
-        nome: newTask,
-      });
+    if (key !== '') {
+      try {
+        await update(ref(database, `tarefas/${user}/${key}`), {
+          nome: newTask
+        });
+        Keyboard.dismiss()
+        setNewTask('');
+        setKey('');
+        return;
+      } catch (error) {
+        console.error("Erro ao atualizar tarefa:", error);
+      }
+    } else {
+      try {
+        const userRef = ref(database, `tarefas/${user}`);
+        const newTaskRef = push(userRef);
+        await set(newTaskRef, {
+          nome: newTask,
+        });
 
-      setNewTask('');
-    } catch (error) {
-      console.error("Error adding task:", error);
+        setNewTask('');
+      } catch (error) {
+        console.error("Erro ao adicionar tarefa:", error);
+      }
     }
+    
   }
-
   async function handleLogout() {
     await AsyncStorage.removeItem('user');
     setUser(null);
   }
 
-  function handleDelete(key) {
-    alert(key);
+  async function handleDelete(key) {
+    try {
+      const refDelete = ref(database, `tarefas/${user}/${key}`);
+      await remove(refDelete);
+      alert('Tarefa removida', key);
+
+      const taskDelet = task.filter(item => item.key !== key);
+      setTask(taskDelet);
+
+    } catch (error) {
+      console.error("Erro ao deletar tarefa:", error);
+      alert('Erro ao deletar tarefa.');
+    }
   }
 
-  function handleEdit(data) {
-    console.log(data);
+ async function handleEdit(data) {
+    try{
+      setNewTask(data.nome)
+      inputRef.current.focus()
+      setKey(data.key)
+
+    
+    }catch(error){
+      console.error("Erro ao atualizar tarefas:", error);
+      alert('Erro ao editar tarefa.');
+
+    }
+    //await update(ref(database, 'usuario/2'), {
+      // nome: 'Vai se fuder'
+     //})
+         
+   // alert(data)
+   // console.log(data);
   }
 
   if (!user) {
@@ -87,6 +130,7 @@ export default function App() {
           placeholder='O que vai fazer hoje'
           value={newTask}
           onChangeText={(text) => setNewTask(text)}
+          ref={inputRef}
         />
         <TouchableOpacity style={styles.buttonAdd} onPress={handleAdd}>
           <Text style={styles.buttonText}>+</Text>
@@ -151,3 +195,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   }
 });
+
+
+
