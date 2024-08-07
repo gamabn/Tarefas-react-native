@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import List from './src/components/List';
 import { database } from './src/services/firebaseConnection';
 import { ref, push,set, onValue, remove,update } from 'firebase/database';
+import Feather from 'react-native-vector-icons/Feather'
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -122,8 +123,26 @@ export default function App() {
     );
   }
 
+  function handleCancel(){
+    setKey('');
+    setNewTask('');
+    Keyboard.dismiss();
+  }
+
   return (
     <View style={styles.container}>
+
+      {key.length > 0 && (
+          <View  style={{flexDirection:'row',paddingBottom: 5}}>
+            <TouchableOpacity onPress={handleCancel}>
+                 <Feather   name="x-circle" size={20} color='#ff0000'/>
+            </TouchableOpacity>
+            <Text  style={{marginLeft: 5, color:'#ff0000'}}>Voce esta editando uma tarefa</Text>
+          </View>
+      )}
+
+     
+
       <View style={styles.containerTask}>
         <TextInput
           style={styles.input}
@@ -136,6 +155,8 @@ export default function App() {
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
+
+      <View>
       <FlatList
         data={task}
         keyExtractor={item => item.key}
@@ -144,8 +165,9 @@ export default function App() {
         )}
       />
       <TouchableOpacity style={styles.buttonLogout} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
+        <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>
+    </View>
     </View>
   );
 }
@@ -186,7 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
   },
   buttonLogout: {
-    backgroundColor: '#f00',
+    backgroundColor: '#000',
     height: 45,
     alignItems: 'center',
     justifyContent: 'center',
